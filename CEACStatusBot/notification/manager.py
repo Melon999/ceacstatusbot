@@ -23,7 +23,7 @@ class NotificationManager():
                 TIMEZONE = os.environ["TIMEZONE"]
                 localTimeZone = pytz.timezone(TIMEZONE)
                 localTime = datetime.datetime.now(localTimeZone)
-                 print(localTime)
+                print(localTime)
             except pytz.exceptions.UnknownTimeZoneError:
                 print("UNKNOWN TIMEZONE Error, use default")
                 localTime = datetime.datetime.now()
