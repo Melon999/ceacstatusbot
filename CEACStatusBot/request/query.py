@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import base64
 import os
 import time
+from datetime import timedelta
 
 from CEACStatusBot.captcha import CaptchaHandle, OnnxCaptchaHandle
 
@@ -118,7 +119,7 @@ def query_status(location, application_num, passport_number, surname, captchaHan
         isSuccess = True
         result = {
             "success": True,
-            "time": str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
+            "time": str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime() + timedelta(hours=8))),
             "visa_type": visa_type,
             "status": status,
             "case_created": case_created,
