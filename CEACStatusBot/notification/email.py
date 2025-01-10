@@ -27,14 +27,17 @@ class EmailNotificationHandle(NotificationHandle):
 
         # 格式化邮件内容为 HTML 格式，使用 <br> 标签换行
         mail_content_html = (
+            f"<html><body>"
             f"<p><strong>Time:</strong> {result['time']}</p>"
             f"<p><strong>Visa Type:</strong> {result['visa_type']}</p>"
-            f"<p><strong>Status:</strong> <span style='color:red;'>{result['status']}</span></p>"
+            f"<p><strong>Status:</strong> <span style='color:red; font-weight:bold;'>{result['status']}</span></p>"
             f"<p><strong>Case Created:</strong> {result['case_created']}</p>"
             f"<p><strong>Case Last Updated:</strong> {result['case_last_updated']}</p>"
             f"<p><strong>Description:</strong> {result['description']}</p>"
             f"<p><strong>Application Number:</strong> {result['application_num']}</p>"
             f"<p><strong>Original Application Number:</strong> {result['application_num_origin']}</p>"
+            f"<p>--- End of Status Update ---</p>"
+            f"</body></html>"
         )
 
         msg = MIMEMultipart()
