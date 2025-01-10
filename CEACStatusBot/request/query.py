@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import base64
 import os
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from CEACStatusBot.captcha import CaptchaHandle, OnnxCaptchaHandle
 
@@ -116,10 +116,14 @@ def query_status(location, application_num, passport_number, surname, captchaHan
         case_last_updated = soup.find("span", id="ctl00_ContentPlaceHolder1_ucApplicationStatusView_lblStatusDate").string
         description = soup.find("span", id="ctl00_ContentPlaceHolder1_ucApplicationStatusView_lblMessage").string
 
+        utc_now = datetime.utcnow()
+        local_now = utc_now + timedelta(hours=8)
+        current_time = local_now.strftime("%Y-%m-%d %H:%M:%S")
+
         isSuccess = True
         result = {
             "success": True,
-            "time": str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime() + timedelta(hours=8))),
+            "time": current_time,
             "visa_type": visa_type,
             "status": status,
             "case_created": case_created,
