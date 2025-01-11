@@ -18,6 +18,7 @@ class NotificationManager():
         res = query_status(self.__location, self.__number, self.__passport_number, self.__surname, self.__captchaHandle)
 
         if res['status'] == "Refused":
+            return
             import os,pytz,datetime
             try:
                 TIMEZONE = os.environ["TIMEZONE"]
