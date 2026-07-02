@@ -73,12 +73,8 @@ class NotificationManager:
             self.__save_current_status(current_status, current_last_updated)
             self.__send_notifications(res)
         else:
-            print("Status unchanged. No notification sent.")
-            # Daily digest at 8:00 and 17:00 — always send email regardless of status change
-            localTime = self._get_local_time()
-            if localTime.hour in (8, 17):
-                print(f"Sending daily digest email at hour {localTime.hour}")
-                self.__send_email_only(res)
+            print("Status unchanged. Sending heartbeat email to verify bot is running.")
+            self.__send_email_only(res)
 
     def __load_statuses(self) -> list:
         if os.path.exists(self.__status_file):
