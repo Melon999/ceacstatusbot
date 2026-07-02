@@ -103,22 +103,17 @@ class NotificationManager:
                 localTimeZone = pytz.timezone(TIMEZONE)
                 localTime = datetime.datetime.now(localTimeZone)
                 print(localTime)
-            except pytz.exceptions.UnknownTimeZoneError:
-                print("UNKNOWN TIMEZONE Error, use default")
-                localTime = datetime.datetime.now()
-            except KeyError:
-                print("TIMEZONE Error")
-                localTime = datetime.datetime.now()
-
-            active_hour_start, active_hour_end = self._get_hour_range()
-            start_dt = datetime.datetime.combine(localTime.date(), active_hour_start, tzinfo=localTimeZone)
-            end_dt = datetime.datetime.combine(localTime.date(), active_hour_end, tzinfo=localTimeZone)
-            if not (start_dt <= localTime <= end_dt):
-                print(
-                    f"Outside active hours {os.getenv('ACTIVE_HOURS', DEFAULT_ACTIVE_HOURS)}. "
-                    "No notification sent for Approved status."
-                )
-                return
+                active_hour_start, active_hour_end = self._get_hour_range()
+                start_dt = datetime.datetime.combine(localTime.date(), active_hour_start, tzinfo=localTimeZone)
+                end_dt = datetime.datetime.combine(localTime.date(), active_hour_end, tzinfo=localTimeZone)
+                if not (start_dt <= localTime <= end_dt):
+                    print(
+                        f"Outside active hours {os.getenv('ACTIVE_HOURS', DEFAULT_ACTIVE_HOURS)}. "
+                        "No notification sent for Approved status."
+                    )
+                    return
+            except (pytz.exceptions.UnknownTimeZoneError, KeyError):
+                print("TIMEZONE Error, active hours check skipped")
 
         for notificationHandle in self.__handleList:
             notificationHandle.send(res)
