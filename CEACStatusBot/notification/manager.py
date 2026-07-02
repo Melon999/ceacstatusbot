@@ -51,7 +51,6 @@ class NotificationManager:
             self.__surname,
             self.__captchaHandle,
         )
-        return
         if not res["success"]:
             raise RuntimeError("Query status failed, no notification sent.")
         current_status = res["status"]
