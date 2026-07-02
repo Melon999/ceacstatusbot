@@ -1,5 +1,3 @@
-raise RuntimeError("TEST: intentional workflow failure")
-
 import json
 import os
 import subprocess
