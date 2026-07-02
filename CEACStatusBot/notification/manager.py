@@ -40,6 +40,15 @@ class NotificationManager:
             raise ValueError("Start time must be before end time, got start: {start}, end: {end}")
         return start, end
 
+    def _get_local_time(self) -> datetime.datetime:
+        try:
+            TIMEZONE = os.environ["TIMEZONE"]
+            localTimeZone = pytz.timezone(TIMEZONE)
+            return datetime.datetime.now(localTimeZone)
+        except (pytz.exceptions.UnknownTimeZoneError, KeyError):
+            print("TIMEZONE Error, use default")
+            return datetime.datetime.now()
+
     def addHandle(self, notificationHandle: NotificationHandle) -> None:
         self.__handleList.append(notificationHandle)
 
@@ -65,6 +74,11 @@ class NotificationManager:
             self.__send_notifications(res)
         else:
             print("Status unchanged. No notification sent.")
+            # Daily digest at 8:00 and 17:00 — always send email regardless of status change
+            localTime = self._get_local_time()
+            if localTime.hour in (8, 17):
+                print(f"Sending daily digest email at hour {localTime.hour}")
+                self.__send_email_only(res)
 
     def __load_statuses(self) -> list:
         if os.path.exists(self.__status_file):
@@ -109,3 +123,9 @@ class NotificationManager:
 
         for notificationHandle in self.__handleList:
             notificationHandle.send(res)
+
+    def __send_email_only(self, res: dict) -> None:
+        from .email import EmailNotificationHandle
+        for handle in self.__handleList:
+            if isinstance(handle, EmailNotificationHandle):
+                handle.send(res)
