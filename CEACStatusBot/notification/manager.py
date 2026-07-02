@@ -51,6 +51,7 @@ class NotificationManager:
             self.__surname,
             self.__captchaHandle,
         )
+        return
         if not res["success"]:
             raise RuntimeError("Query status failed, no notification sent.")
         current_status = res["status"]
@@ -84,11 +85,12 @@ class NotificationManager:
             json.dump({"statuses": statuses}, file)
 
     def __send_notifications(self, res: dict) -> None:
-        if res["status"] == "Refused":
+        if res["status"] == "Approved":
             try:
                 TIMEZONE = os.environ["TIMEZONE"]
                 localTimeZone = pytz.timezone(TIMEZONE)
                 localTime = datetime.datetime.now(localTimeZone)
+                print(localTime)
             except pytz.exceptions.UnknownTimeZoneError:
                 print("UNKNOWN TIMEZONE Error, use default")
                 localTime = datetime.datetime.now()
@@ -102,7 +104,7 @@ class NotificationManager:
             if not (start_dt <= localTime <= end_dt):
                 print(
                     f"Outside active hours {os.getenv('ACTIVE_HOURS', DEFAULT_ACTIVE_HOURS)}. "
-                    "No notification sent for Refused status."
+                    "No notification sent for Approved status."
                 )
                 return
 
