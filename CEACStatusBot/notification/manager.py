@@ -122,6 +122,10 @@ class NotificationManager:
 
     def __send_email_only(self, res: dict) -> None:
         from .email import EmailNotificationHandle
+        sent = False
         for handle in self.__handleList:
             if isinstance(handle, EmailNotificationHandle):
                 handle.send(res)
+                sent = True
+        if not sent:
+            print("No EmailNotificationHandle registered. Check FROM/TO/PASSWORD in secrets.")
