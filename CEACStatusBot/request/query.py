@@ -102,6 +102,12 @@ def query_status(location, application_num, passport_number, surname, captchaHan
         soup = BeautifulSoup(r.text, features="lxml")
         status_tag = soup.find("span", id="ctl00_ContentPlaceHolder1_ucApplicationStatusView_lblStatus")
         if not status_tag:
+            error_tag = soup.find("span", id="ctl00_ContentPlaceHolder1_ucApplicationStatusView_lblError")
+            if error_tag:
+                print(f"CEAC error: {error_tag.string}")
+            elif soup.find("title"):
+                print(f"CEAC page title: {soup.find('title').string}")
+            print(f"Response preview: {r.text[:500]}")
             continue
 
         application_num_returned = soup.find("span", id="ctl00_ContentPlaceHolder1_ucApplicationStatusView_lblCaseNo").string
