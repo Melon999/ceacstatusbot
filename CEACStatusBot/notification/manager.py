@@ -60,10 +60,10 @@ class NotificationManager:
             self.__send_notifications(res)
         else:
             print("Status unchanged. No notification sent.")
-            localTime = self._get_local_time()
-            if localTime.hour in (8, 17):
-                print(f"Sending daily digest email at hour {localTime.hour}")
+            if not self.__digest_sent_today():
+                print("Sending daily digest email")
                 self.__send_email_only(res)
+                self.__mark_digest_sent()
 
     def __load_statuses(self) -> list:
         if os.path.exists(self.__status_file):
@@ -95,3 +95,25 @@ class NotificationManager:
                 sent = True
         if not sent:
             print("No EmailNotificationHandle registered. Check FROM/TO/PASSWORD in secrets.")
+
+    def __digest_sent_today(self) -> bool:
+        try:
+            if os.path.exists(self.__status_file):
+                with open(self.__status_file, "r") as f:
+                    data = json.load(f)
+                    return data.get("last_digest_date") == self._get_local_time().strftime("%Y-%m-%d")
+        except Exception:
+            pass
+        return False
+
+    def __mark_digest_sent(self) -> None:
+        try:
+            data = {}
+            if os.path.exists(self.__status_file):
+                with open(self.__status_file, "r") as f:
+                    data = json.load(f)
+            data["last_digest_date"] = self._get_local_time().strftime("%Y-%m-%d")
+            with open(self.__status_file, "w") as f:
+                json.dump(data, f)
+        except Exception as e:
+            print(f"Failed to mark digest sent: {e}")
