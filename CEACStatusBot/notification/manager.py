@@ -60,12 +60,11 @@ class NotificationManager:
             self.__send_notifications(res)
         else:
             print("Status unchanged. No notification sent.")
-            # TEST: force send to verify email title
-            print("Sending daily digest email")
-            res["_digest"] = True
-            self.__send_email_only(res)
             localTime = self._get_local_time()
             if 8 <= localTime.hour <= 17 and not self.__digest_sent_today():
+                print("Sending daily digest email")
+                res["_digest"] = True
+                self.__send_email_only(res)
                 self.__mark_digest_sent()
 
     def __load_statuses(self) -> list:
