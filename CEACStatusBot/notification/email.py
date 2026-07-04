@@ -23,7 +23,10 @@ class EmailNotificationHandle(NotificationHandle):
         
         # {'success': True, 'visa_type': 'NONIMMIGRANT VISA APPLICATION', 'status': 'Issued', 'case_created': '30-Aug-2022', 'case_last_updated': '19-Oct-2022', 'description': 'Your visa is in final processing. If you have not received it in more than 10 working days, please see the webpage for contact information of the embassy or consulate where you submitted your application.', 'application_num': '***'}
 
-        mail_title = '美签状态监控: {}'.format(result['status'])
+        if result.get("_digest"):
+            mail_title = '【毫无变化】美签状态监控: {}'.format(result['status'])
+        else:
+            mail_title = '【状态更新】美签状态监控: {}'.format(result['status'])
 
         mail_content_html = (
             f"<html><body>"
