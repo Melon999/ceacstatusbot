@@ -36,6 +36,12 @@ jobs:
       - name: Sync environment with uv
         run: uv sync
 
+      - name: Download previous status
+        uses: actions/download-artifact@v4
+        with:
+          name: status-artifact
+        continue-on-error: true
+
       - name: Execute py script
         env:
           LOCATION: ${{ secrets.LOCATION }}
@@ -49,8 +55,6 @@ jobs:
           SMTP: ${{ secrets.SMTP }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: uv run trigger.py
 
       - name: Upload status artifact

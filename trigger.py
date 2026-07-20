@@ -1,6 +1,5 @@
 import json
 import os
-import subprocess
 
 from dotenv import load_dotenv
 
@@ -17,32 +16,12 @@ else:
     print(".env not found, using system environment only")
 
 
-def download_artifact():
-    try:
-        result = subprocess.run(
-            ["gh", "api", f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/artifacts"],
-            capture_output=True,
-            text=True,
-        )
-        artifacts = json.loads(result.stdout)
-        artifact_exists = any(artifact["name"] == "status-artifact" for artifact in artifacts["artifacts"])
-
-        if artifact_exists:
-            subprocess.run(["gh", "run", "download", "--name", "status-artifact"], check=True)
-        else:
-            with open("status_record.json", "w") as file:
-                json.dump({"statuses": []}, file)
-    except Exception as e:
-        print(f"Error downloading artifact: {e}")
-
-
-# --- Read env vars with fallback ---
-GH_TOKEN = os.getenv("GH_TOKEN")
-if not GH_TOKEN:
-    print("GH_TOKEN not found")
-
+# Status record is downloaded by actions/download-artifact in the workflow.
+# If no previous artifact exists, create a fresh one.
 if not os.path.exists("status_record.json"):
-    download_artifact()
+    print("No previous status record, starting fresh")
+    with open("status_record.json", "w") as f:
+        json.dump({"statuses": []}, f)
 
 try:
     LOCATION = os.environ["LOCATION"]
